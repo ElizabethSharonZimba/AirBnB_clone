@@ -1,130 +1,34 @@
-AirBnB Clone Project
-Welcome to the AirBnB clone project! This project is the first step towards building a full web application. The primary goal is to create a command interpreter that manages AirBnB objects. This command interpreter will be crucial for subsequent projects involving HTML/CSS templating, database storage, API, and front-end integration.
+# 0x00. AirBnB clone - The console
 
-Project Overview
-Parent Class (BaseModel): Implement a parent class (BaseModel) responsible for the initialization, serialization, and deserialization of future instances.
+## 0x00.Table of contents
 
-Serialization/Deserialization Flow: Create a simple flow of serialization/deserialization: Instance <-> Dictionary <-> JSON string <-> File.
+* [0x01 Introduction](#0x01-Introduction)
+* [0x02 Environment](#0x02-Environment)
+* [0x03 Installation](#0x03-Installation)
+* [0x04 Testing](#0x04-Testing)
+* [0x05 Usage](#0x05-Usage)
+* [0x06 Authors](#0x06-Authors)
 
-AirBnB Classes: Develop classes for AirBnB objects such as User, State, City, Place, etc. All these classes should inherit from the BaseModel.
+## 0x01 Introduction
 
-Storage Engine: Build the first abstracted storage engine for the project, specifically a File storage system.
+Team project to build a clone of [AirBnB](https://www.airbnb.com/).
 
-Unit Tests: Create unit tests to validate all classes and the storage engine.
+The console is a command interpreter to manage objects abstraction between objects and how they are stored.
 
-Command Interpreter
-The command interpreter allows you to:
+To see the fundamental background of the project visit the [Wiki](https://github.com/ralexrivero/AirBnB_clone/wiki).
 
-Create a new object (e.g., a new User or Place).
-Retrieve an object from a file, database, etc.
-Perform operations on objects (count, compute stats, etc.).
-Update attributes of an object.
-Destroy an object.
-Getting Started
-To start the command interpreter, follow these steps:
+The console will perform the following tasks:
 
-Clone the repository.
-Navigate to the project folder.
-Run the command interpreter using python3 console.py.
-Usage
-Interactive Mode
-In interactive mode, you can use the following commands:
+* create a new object
+* retrive an object from a file
+* do operations on objects
+* destroy an object
 
-create: Create a new object.
-show: Retrieve an object.
-update: Update attributes of an object.
-destroy: Destroy an object.
-all: Display all objects.
-count: Count the number of objects.
-bash
-Copy code
-$ ./console.py
-(hbnb) help
+### Storage
 
-Documented commands (type help <topic>):
-========================================
-EOF  help  quit
+All the classes are handled by the `Storage` engine in the `FileStorage` Class.
 
-(hbnb) 
-(hbnb) 
-(hbnb) quit
-$
-Non-Interactive Mode
-In non-interactive mode, you can use pipes or redirect input to execute commands:
+## 0x02 Environment
 
-bash
-Copy code
-$ echo "help" | ./console.py
-(hbnb)
-
-Documented commands (type help <topic>):
-========================================
-EOF  help  quit
-(hbnb) 
-$
-$ cat test_help | ./console.py
-(hbnb)
-
-Documented commands (type help <topic>):
-========================================
-EOF  help  quit
-(hbnb) 
-$
-All tests should also pass in non-interactive mode:
-
-bash
-Copy code
-$ echo "python3 -m unittest discover tests" | bash
-Resources
-cmd module
-uuid module
-datetime module
-unittest module
-Learning Objectives
-By completing this project, you will gain knowledge in:
-
-Creating a Python package
-Developing a command interpreter using the cmd module
-Implementing unit testing in a large project
-Serializing and deserializing a class
-Reading and writing JSON files
-Managing datetime in Python
-Understanding UUID (Universally Unique Identifier)
-Using *args and **kwargs in functions
-Handling named arguments in a function
-Task Overview: You are working on an Airbnb clone project, and the task involves creating various Python classes and updating the console to manage instances of these classes.
-
-Classes Inheriting from BaseModel:
-
-State with public attributes: name (string - empty)
-City with public attributes: state_id (string - empty), name (string - empty)
-Amenity with public attribute: name (string - empty)
-Place with multiple public attributes: city_id, user_id, name, description, number_rooms, number_bathrooms, max_guest, price_by_night, latitude, longitude, amenity_ids (list of strings - empty)
-Review with public attributes: place_id, user_id, text (all strings - empty)
-FileStorage Update: The FileStorage module needs to be updated to handle serialization and deserialization for the new classes (Place, State, City, Amenity, and Review).
-
-Console 1.0 Commands:
-
-Commands to be implemented in the console (console.py): show, create, destroy, update, and all for all classes created.
-All Instances by Class Name:
-
-The console should allow retrieving all instances of a class using <class name>.all().
-Count Instances:
-
-The console should allow retrieving the number of instances of a class using <class name>.count().
-Show Instance by ID:
-
-Implement <class name>.show(<id>) in the console to retrieve an instance based on its ID.
-Destroy Instance by ID:
-
-Implement <class name>.destroy(<id>) in the console to destroy an instance based on its ID.
-Update Instance:
-
-Implement <class name>.update(<id>, <attribute name>, <attribute value>) in the console to update an instance based on its ID and attribute.
-Update from Dictionary:
-
-Implement <class name>.update(<id>, <dictionary representation>) in the console to update an instance based on its ID using a dictionary.
-Unittests for Console:
-
-Write unittests for console.py covering all features. Use techniques to intercept STDOUT for testing.
-
+<!-- ubuntu -->
+<a href="https://ubuntu.com/" target="_blank"> <img height="" src="https://img.shields.io/static/v1?label=&message=Ubuntu&color=E95420&logo=Ubuntu&logoColor=E95420&labelColor=2F333A" alt="Suite CRM"></a> <!-- bash --> <a href="https://www.gnu.org/software/bash/" target="_blank"> <img height="" src="https://img.shields.io/static/v1?label=&message=GNU%20Bash&color=4EAA25&logo=GNU%20Bash&logoColor=4EAA25&labelColor=2F333A" alt="terminal"></a> <!-- python--> <a href="https://www.python.org" target="_blank"> <img height="" src="https://img.shields.io/static/v1?label=&message=Python&color=FFD43B&logo=python&logoColor=3776AB&labelColor=2F3

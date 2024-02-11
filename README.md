@@ -1,0 +1,130 @@
+AirBnB Clone Project
+Welcome to the AirBnB clone project! This project is the first step towards building a full web application. The primary goal is to create a command interpreter that manages AirBnB objects. This command interpreter will be crucial for subsequent projects involving HTML/CSS templating, database storage, API, and front-end integration.
+
+Project Overview
+Parent Class (BaseModel): Implement a parent class (BaseModel) responsible for the initialization, serialization, and deserialization of future instances.
+
+Serialization/Deserialization Flow: Create a simple flow of serialization/deserialization: Instance <-> Dictionary <-> JSON string <-> File.
+
+AirBnB Classes: Develop classes for AirBnB objects such as User, State, City, Place, etc. All these classes should inherit from the BaseModel.
+
+Storage Engine: Build the first abstracted storage engine for the project, specifically a File storage system.
+
+Unit Tests: Create unit tests to validate all classes and the storage engine.
+
+Command Interpreter
+The command interpreter allows you to:
+
+Create a new object (e.g., a new User or Place).
+Retrieve an object from a file, database, etc.
+Perform operations on objects (count, compute stats, etc.).
+Update attributes of an object.
+Destroy an object.
+Getting Started
+To start the command interpreter, follow these steps:
+
+Clone the repository.
+Navigate to the project folder.
+Run the command interpreter using python3 console.py.
+Usage
+Interactive Mode
+In interactive mode, you can use the following commands:
+
+create: Create a new object.
+show: Retrieve an object.
+update: Update attributes of an object.
+destroy: Destroy an object.
+all: Display all objects.
+count: Count the number of objects.
+bash
+Copy code
+$ ./console.py
+(hbnb) help
+
+Documented commands (type help <topic>):
+========================================
+EOF  help  quit
+
+(hbnb) 
+(hbnb) 
+(hbnb) quit
+$
+Non-Interactive Mode
+In non-interactive mode, you can use pipes or redirect input to execute commands:
+
+bash
+Copy code
+$ echo "help" | ./console.py
+(hbnb)
+
+Documented commands (type help <topic>):
+========================================
+EOF  help  quit
+(hbnb) 
+$
+$ cat test_help | ./console.py
+(hbnb)
+
+Documented commands (type help <topic>):
+========================================
+EOF  help  quit
+(hbnb) 
+$
+All tests should also pass in non-interactive mode:
+
+bash
+Copy code
+$ echo "python3 -m unittest discover tests" | bash
+Resources
+cmd module
+uuid module
+datetime module
+unittest module
+Learning Objectives
+By completing this project, you will gain knowledge in:
+
+Creating a Python package
+Developing a command interpreter using the cmd module
+Implementing unit testing in a large project
+Serializing and deserializing a class
+Reading and writing JSON files
+Managing datetime in Python
+Understanding UUID (Universally Unique Identifier)
+Using *args and **kwargs in functions
+Handling named arguments in a function
+Task Overview: You are working on an Airbnb clone project, and the task involves creating various Python classes and updating the console to manage instances of these classes.
+
+Classes Inheriting from BaseModel:
+
+State with public attributes: name (string - empty)
+City with public attributes: state_id (string - empty), name (string - empty)
+Amenity with public attribute: name (string - empty)
+Place with multiple public attributes: city_id, user_id, name, description, number_rooms, number_bathrooms, max_guest, price_by_night, latitude, longitude, amenity_ids (list of strings - empty)
+Review with public attributes: place_id, user_id, text (all strings - empty)
+FileStorage Update: The FileStorage module needs to be updated to handle serialization and deserialization for the new classes (Place, State, City, Amenity, and Review).
+
+Console 1.0 Commands:
+
+Commands to be implemented in the console (console.py): show, create, destroy, update, and all for all classes created.
+All Instances by Class Name:
+
+The console should allow retrieving all instances of a class using <class name>.all().
+Count Instances:
+
+The console should allow retrieving the number of instances of a class using <class name>.count().
+Show Instance by ID:
+
+Implement <class name>.show(<id>) in the console to retrieve an instance based on its ID.
+Destroy Instance by ID:
+
+Implement <class name>.destroy(<id>) in the console to destroy an instance based on its ID.
+Update Instance:
+
+Implement <class name>.update(<id>, <attribute name>, <attribute value>) in the console to update an instance based on its ID and attribute.
+Update from Dictionary:
+
+Implement <class name>.update(<id>, <dictionary representation>) in the console to update an instance based on its ID using a dictionary.
+Unittests for Console:
+
+Write unittests for console.py covering all features. Use techniques to intercept STDOUT for testing.
+

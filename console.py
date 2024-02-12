@@ -1,101 +1,80 @@
 #!/usr/bin/python3
-"""
-Command interpreter for the AirBnB project.
-"""
-
 import cmd
 from models.base_model import BaseModel
 from models import storage
-import shlex
 
 class HBNBCommand(cmd.Cmd):
-    prompt = "(hbnb) "
+    prompt = '(hbnb) '
+
+    def emptyline(self):
+        pass
 
     def do_quit(self, arg):
-        """Exit the program"""
         return True
 
     def do_EOF(self, arg):
-        """Exit the program"""
         print()
         return True
 
     def do_create(self, arg):
-        """Create a new instance and print its id"""
-        args = shlex.split(arg)
-        if not args:
-            print("Usage: create <class_name>")
-        elif args[0] not in storage.classes:
-            print("** Class doesn't exist **")
+        if not arg or arg not in globals():
+            print("** class name missing **")
         else:
-            new_instance = storage.classes[args[0]]()
+            new_instance = globals()[arg]()
             new_instance.save()
             print(new_instance.id)
 
     def do_show(self, arg):
-        """Show the details of an instance"""
-        args = shlex.split(arg)
-        if not args or args[0] not in storage.classes:
-            print("Usage: show <class_name> <id>")
-        elif len(args) < 2:
-            print("** Instance id missing **")
+        args = arg.split()
+        if not args or args[0] not in globals() or len(args) == 1:
+            print("** class name missing **" if not args else "** instance id missing **")
         else:
             key = "{}.{}".format(args[0], args[1])
-            instance = storage.all().get(key)
-            if instance:
-                print(instance)
-            else:
-                print("** No instance found **")
+            instances = storage.all()
+            print(instances[key] if key in instances else "** no instance found **")
 
     def do_destroy(self, arg):
-        """Delete an instance"""
-        args = shlex.split(arg)
-        if not args or args[0] not in storage.classes:
-            print("Usage: destroy <class_name> <id>")
-        elif len(args) < 2:
-            print("** Instance id missing **")
+        args = arg.split()
+        if not args or args[0] not in globals() or len(args) == 1:
+            print("** class name missing **" if not args else "** instance id missing **")
         else:
             key = "{}.{}".format(args[0], args[1])
-            if key in storage.all():
-                del storage.all()[key]
+            instances = storage.all()
+            if key in instances:
+                del instances[key]
                 storage.save()
             else:
-                print("** No instance found **")
+                print("** no instance found **")
 
     def do_all(self, arg):
-        """Show all instances or instances of a specific class"""
-        args = shlex.split(arg)
-        instances = []
-        if not args:
-            for instance in storage.all().values():
-                instances.append(str(instance))
-            print(instances)
-        elif args[0] not in storage.classes:
-            print("** Class doesn't exist **")
+        args = arg.split()
+        instances = storage.all()
+        obj_list = []
+        if not arg:
+            obj_list = [str(obj) for obj in instances.values()]
+        elif args[0] not in globals():
+            print("** class doesn't exist **")
+            return
         else:
-            for key, value in storage.all().items():
-                if key.split('.')[0] == args[0]:
-                    instances.append(str(value))
-            print(instances)
+            obj_list = [str(obj) for key, obj in instances.items() if key.split('.')[0] == args[0]]
+        print(obj_list)
 
     def do_update(self, arg):
-        """Update an instance's attribute"""
-        args = shlex.split(arg)
-        if not args or args[0] not in storage.classes:
-            print("Usage: update <class_name> <id> <attribute_name> <attribute_value>")
-        elif len(args) < 3:
-            print("** Instance id or attribute name missing **")
-        elif len(args) < 4:
-            print("** Attribute value missing **")
+        args = arg.split()
+        if not args or args[0] not in globals() or len(args) <= 3:
+            print("** class name missing **" if not args else
+                  "** instance id missing **" if len(args) == 1 else
+                  "** attribute name missing **" if len(args) == 2 else
+                  "** value missing **")
         else:
             key = "{}.{}".format(args[0], args[1])
-            if key in storage.all():
-                instance = storage.all()[key]
-                attr_name, attr_value = args[2], args[3]
-                setattr(instance, attr_name, attr_value)
-                instance.save()
+            instances = storage.all()
+            if key in instances:
+                obj = instances[key]
+                setattr(obj, args[2], args[3])
+                obj.save()
             else:
-                print("** No instance found **")
+                print("** no instance found **")
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

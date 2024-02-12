@@ -5,6 +5,7 @@ from datetime import datetime
 import models
 import re
 
+
 class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) '
 

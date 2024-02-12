@@ -1,80 +1,167 @@
 #!/usr/bin/python3
+
 import cmd
-from models.base_model import BaseModel
-from models import storage
+from datetime import datetime
+import models
+import re
 
 class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) '
 
+    def precmd(self, line):
+        return line.strip()
+
+    def do_EOF(self, line):
+        return True
+
+    def do_quit(self, line):
+        return True
+
     def emptyline(self):
         pass
 
-    def do_quit(self, arg):
-        return True
-
-    def do_EOF(self, arg):
-        print()
-        return True
-
-    def do_create(self, arg):
-        if not arg or arg not in globals():
+    def do_create(self, line):
+        if not line:
             print("** class name missing **")
         else:
-            new_instance = globals()[arg]()
-            new_instance.save()
-            print(new_instance.id)
-
-    def do_show(self, arg):
-        args = arg.split()
-        if not args or args[0] not in globals() or len(args) == 1:
-            print("** class name missing **" if not args else "** instance id missing **")
-        else:
-            key = "{}.{}".format(args[0], args[1])
-            instances = storage.all()
-            print(instances[key] if key in instances else "** no instance found **")
-
-    def do_destroy(self, arg):
-        args = arg.split()
-        if not args or args[0] not in globals() or len(args) == 1:
-            print("** class name missing **" if not args else "** instance id missing **")
-        else:
-            key = "{}.{}".format(args[0], args[1])
-            instances = storage.all()
-            if key in instances:
-                del instances[key]
-                storage.save()
+            try:
+                cls = models.class_dict[line]
+            except KeyError:
+                print("** class doesn't exist **")
             else:
-                print("** no instance found **")
-
-    def do_all(self, arg):
-        args = arg.split()
-        instances = storage.all()
-        obj_list = []
-        if not arg:
-            obj_list = [str(obj) for obj in instances.values()]
-        elif args[0] not in globals():
-            print("** class doesn't exist **")
-            return
-        else:
-            obj_list = [str(obj) for key, obj in instances.items() if key.split('.')[0] == args[0]]
-        print(obj_list)
-
-    def do_update(self, arg):
-        args = arg.split()
-        if not args or args[0] not in globals() or len(args) <= 3:
-            print("** class name missing **" if not args else
-                  "** instance id missing **" if len(args) == 1 else
-                  "** attribute name missing **" if len(args) == 2 else
-                  "** value missing **")
-        else:
-            key = "{}.{}".format(args[0], args[1])
-            instances = storage.all()
-            if key in instances:
-                obj = instances[key]
-                setattr(obj, args[2], args[3])
+                obj = cls()
                 obj.save()
+                print(obj.id)
+
+    def do_show(self, line):
+        if not line:
+            print("** class name missing **")
+        else:
+            line = line.split()
+            if line[0] in models.class_dict:
+                try:
+                    obj_id = line[0] + '.' + line[1]
+                except IndexError:
+                    print("** instance id missing **")
+                else:
+                    try:
+                        print(models.storage.all()[obj_id])
+                    except KeyError:
+                        print("** no instance found **")
             else:
-                print("** no instance found **")
+                print("** class doesn't exist **")
+
+    def do_destroy(self, line):
+        if not line:
+            print("** class name missing **")
+        else:
+            line = line.split()
+            if line[0] in models.class_dict:
+                try:
+                    obj_id = line[0] + '.' + line[1]
+                except IndexError:
+                    print("** instance id missing **")
+                else:
+                    try:
+                        del models.storage.all()[obj_id]
+                    except KeyError:
+                        print("** no instance found **")
+                    else:
+                        models.storage.save()
+            else:
+                print("** class doesn't exist **")
+
+    def do_all(self, line):
+        if not line:
+            print([str(v) for v in models.storage.all().values()])
+        elif line not in models.class_dict:
+            print("** class doesn't exist **")
+        else:
+            print([str(v) for k, v in models.storage.all().items() if line in k])
+
+    def do_update(self, line):
+        if not line:
+            print("** class name missing **")
+        else:
+            pattern = "[^\s\"\']+|\"[^\"]*\"|\'[^\']*\'"
+            pattern = re.compile(pattern)
+            line = re.findall(pattern, line)
+            for i in range(len(line)):
+                line[i] = line[i].strip("\"'")
+            if line[0] in models.class_dict:
+                try:
+                    obj_id = line[0] + '.' + line[1]
+                except IndexError:
+                    print("** instance id missing **")
+                else:
+                    try:
+                        obj = models.storage.all()[obj_id]
+                    except KeyError:
+                        print("** no instance found **")
+                    else:
+                        try:
+                            attr, val = line[2], line[3]
+                        except IndexError:
+                            print("** attribute name or value missing **")
+                        else:
+                            try:
+                                setattr(obj, attr, val)
+                            except AttributeError:
+                                print("** cannot set val: {} for attr: ({}) **".format(val, attr))
+                            else:
+                                obj.save()
+            else:
+                print("** class doesn't exist **")
+
+    def do_count(self, line):
+        if not line:
+            print(len([str(v) for v in models.storage.all().values()]))
+        elif line not in models.class_dict:
+            print("** class doesn't exist **")
+        else:
+            print(len([str(v) for k, v in models.storage.all().items() if line in k]))
+
+    def do_BaseModel(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'BaseModel', args]))
+
+    def do_User(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'User', args]))
+
+    def do_State(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'State', args]))
+
+    def do_City(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'City', args]))
+
+    def do_Amenity(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'Amenity', args]))
+
+    def do_Place(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'Place', args]))
+
+    def do_Review(self, line):
+        cmd, args = parse(line)
+        self.onecmd(' '.join([cmd, 'Review', args]))
+
+
+def parse(line):
+    pattern = '\.([^.]+)\(|[\s,()]*([^(),]+)[\s,()]*'
+    args = re.findall(pattern, line)
+    cmd = args[0][0]
+    try:
+        args = args[1:]
+    except IndexError:
+        line = ''
+    else:
+        line = ' '.join(map(lambda x: x[1].strip('"'), args))
+    return cmd, line
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
